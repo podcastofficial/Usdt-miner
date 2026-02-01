@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>USDT Miner</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body { font-family: Arial; background:#0d1117; color:#fff; text-align:center; }
+    .box { margin-top:40px; padding:20px; background:#161b22; border-radius:10px; }
+    button { padding:10px 20px; background:#00ff9c; border:none; border-radius:5px; font-size:16px; }
+  </style>
+</head>
+<body>
+
+<h2>💎 USDT Miner</h2>
+
+<div class="box">
+  <p id="user">Loading...</p>
+  <p id="balance">Balance: 0 USDT</p>
+  <p id="refs">Referrals: 0</p>
+  <button onclick="mine()">⛏ Mine</button>
+</div>
+
+<script>
+  const tg = window.Telegram.WebApp;
+  tg.ready();
+
+  let balance = 0;
+  let refs = 0;
+
+  function mine() {
+    balance += 0.2; // system-based fake mining
+    document.getElementById("balance").innerText =
+      "Balance: " + balance.toFixed(2) + " USDT";
+  }
+
+  document.getElementById("user").innerText =
+    "User: " + (tg.initDataUnsafe.user?.username || "Guest");
+</script>
+
+</body>
+</html>
