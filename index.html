@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>USDT Miner</title>
+
+  <!-- Telegram WebApp -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(160deg, #020617, #020617, #020617);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    .card {
+      width: 92%;
+      max-width: 420px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 26px;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(0, 255, 156, 0.15);
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      letter-spacing: 0.5px;
+    }
+
+    .info {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .info p {
+      margin: 10px 0;
+      font-size: 15px;
+      opacity: 0.95;
+    }
+
+    .balance {
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 6px;
+      color: #00ff9c;
+    }
+
+    .mine-btn {
+      width: 100%;
+      padding: 14px;
+      font-size: 17px;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #00ff9c, #00c77c);
+      color: #000;
+      transition: all 0.2s ease;
+      box-shadow: 0 6px 18px rgba(0, 255, 156, 0.35);
+    }
+
+    .mine-btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 4px 12px rgba(0, 255, 156, 0.25);
+    }
+
+    .footer {
+      margin-top: 16px;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="title">💎 USDT Miner</div>
+
+    <div class="info">
+      <p id="user">User: Loading...</p>
+      <p class="balance" id="balance">0.00 USDT</p>
+      <p id="refs">Referrals: 0</p>
+    </div>
+
+    <button class="mine-btn" onclick="mine()">⛏ Start Mining</button>
+
+    <div class="footer">Powered by USDT Miner</div>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+
+    let balance = 8.0;   // demo start balance
+    let referrals = 0;
+
+    document.getElementById("user").innerText =
+      "User: " + (tg.initDataUnsafe?.user?.username || "Guest");
+
+    document.getElementById("balance").innerText =
+      balance.toFixed(2) + " USDT";
+
+    document.getElementById("refs").innerText =
+      "Referrals: " + referrals;
+
+    function mine() {
+      balance += 0.25; // system-based mining
+      document.getElementById("balance").innerText =
+        balance.toFixed(2) + " USDT";
+    }
+  </script>
+</body>
+</html>
