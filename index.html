@@ -2,31 +2,119 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>USDT Miner</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #0f172a; color: white; }
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .header { background: linear-gradient(135deg, #3b82f6, #1d4ed8); padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; }
-        .balance { font-size: 2.5rem; font-weight: bold; margin: 10px 0; }
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
-        .btn { background: #3b82f6; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-size: 16px; }
-        .btn:hover { background: #2563eb; }
-        .package { background: #1e293b; padding: 15px; border-radius: 10px; margin: 10px 0; border: 2px solid #334155; }
-        .package:hover { border-color: #3b82f6; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #0f172a; color: white; }
+        #app { max-width: 500px; margin: 0 auto; min-height: 100vh; padding: 20px; }
+        
+        .header { 
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); 
+            padding: 25px; 
+            border-radius: 20px; 
+            margin-bottom: 20px; 
+            text-align: center;
+        }
+        
+        .balance { font-size: 2.8rem; font-weight: bold; margin: 10px 0; }
+        .balance small { font-size: 1rem; color: rgba(255,255,255,0.8); }
+        
+        .btn-group { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px; 
+            margin: 25px 0; 
+        }
+        
+        .btn { 
+            background: #1e293b; 
+            border: 2px solid #334155; 
+            color: white; 
+            padding: 18px; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            transition: all 0.3s;
+        }
+        
+        .btn:hover { 
+            background: #3b82f6; 
+            border-color: #3b82f6; 
+            transform: translateY(-2px); 
+        }
+        
+        .package-card { 
+            background: #1e293b; 
+            border: 2px solid #334155; 
+            border-radius: 15px; 
+            padding: 20px; 
+            margin: 15px 0; 
+            transition: all 0.3s;
+        }
+        
+        .package-card:hover { 
+            border-color: #3b82f6; 
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3); 
+        }
+        
         .screen { display: none; }
-        .screen.active { display: block; }
-        .back-btn { background: none; border: none; color: white; font-size: 1.5rem; margin-bottom: 20px; cursor: pointer; }
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; }
+        .screen.active { display: block; animation: fadeIn 0.3s; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .back-btn { 
+            background: none; 
+            border: none; 
+            color: white; 
+            font-size: 1.8rem; 
+            margin-bottom: 20px; 
+            cursor: pointer; 
+        }
+        
+        input, select { 
+            width: 100%; 
+            padding: 15px; 
+            background: #0f172a; 
+            border: 2px solid #334155; 
+            border-radius: 10px; 
+            color: white; 
+            margin: 10px 0; 
+            font-size: 16px;
+        }
+        
+        .transaction { 
+            background: #1e293b; 
+            padding: 15px; 
+            margin: 8px 0; 
+            border-radius: 10px; 
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .badge { 
+            background: #3b82f6; 
+            padding: 3px 10px; 
+            border-radius: 20px; 
+            font-size: 0.8rem; 
+            margin-right: 10px;
+        }
+        
+        .positive { color: #10b981; }
+        .negative { color: #ef4444; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Loading -->
+    <div id="app">
+        <!-- Loading Screen -->
         <div id="loading" class="screen active">
-            <h2>Loading USDT Miner...</h2>
+            <div style="text-align: center; padding: 50px;">
+                <div style="width: 50px; height: 50px; border: 3px solid #3b82f6; border-top-color: transparent; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
+                <h2>Loading USDT Miner...</h2>
+            </div>
         </div>
 
         <!-- Dashboard -->
@@ -38,198 +126,319 @@
             </div>
             
             <div class="btn-group">
-                <button class="btn" onclick="showScreen('invest')">💎 Invest</button>
+                <button class="btn" onclick="showScreen('invest')">💰 Invest</button>
                 <button class="btn" onclick="showScreen('withdraw')">📤 Withdraw</button>
                 <button class="btn" onclick="showScreen('referral')">👥 Referral</button>
-                <button class="btn" onclick="loadStats()">📊 Stats</button>
+                <button class="btn" onclick="showScreen('transactions')">📊 History</button>
             </div>
             
-            <div id="package-info" class="package">
+            <div class="package-card">
                 <h3>Current Package</h3>
-                <p id="current-package">None</p>
+                <div id="current-package" style="margin-top: 10px;">
+                    <p style="color: #94a3b8;">No active package</p>
+                    <button class="btn" onclick="showScreen('invest')" style="margin-top: 10px; background: #3b82f6;">Start Investing</button>
+                </div>
             </div>
             
-            <h3>Recent Transactions</h3>
-            <div id="transactions"></div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="claimDailyROI()" style="background: linear-gradient(135deg, #10b981, #059669);">🎁 Claim Daily ROI</button>
+            </div>
         </div>
 
-        <!-- Invest Screen -->
+        <!-- Investment Packages -->
         <div id="invest" class="screen">
-            <button class="back-btn" onclick="showScreen('dashboard')">← Back</button>
-            <h2>Select Package</h2>
+            <button class="back-btn" onclick="showScreen('dashboard')">←</button>
+            <h2>Investment Packages</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px;">Select a package to start earning</p>
             
-            <div class="package" onclick="selectPackage('basic')">
-                <h3>Basic - $10</h3>
-                <p>Daily ROI: $0.10</p>
-                <p>Total ROI: $25</p>
-                <button class="btn">Select</button>
-            </div>
-            
-            <div class="package" onclick="selectPackage('silver')">
-                <h3>Silver - $25</h3>
-                <p>Daily ROI: $0.25</p>
-                <p>Total ROI: $62.5</p>
-                <button class="btn">Select</button>
-            </div>
-            
-            <div class="package" onclick="selectPackage('gold')">
-                <h3>Gold - $100</h3>
-                <p>Daily ROI: $1.00</p>
-                <p>Total ROI: $250</p>
-                <button class="btn">Select</button>
+            <div id="packages-list">
+                <!-- Packages will be loaded here -->
             </div>
         </div>
 
         <!-- Withdraw Screen -->
         <div id="withdraw" class="screen">
-            <button class="back-btn" onclick="showScreen('dashboard')">← Back</button>
+            <button class="back-btn" onclick="showScreen('dashboard')">←</button>
             <h2>Withdraw USDT</h2>
             
-            <p>Available: $<span id="available-balance">0.00</span></p>
-            <input type="number" id="amount" placeholder="Amount" min="1">
-            <input type="text" id="wallet" placeholder="USDT TRC20 Address">
-            <button class="btn" onclick="withdraw()">Withdraw Now</button>
-            <p style="margin-top: 10px; color: #94a3b8;">Processing: 1-24 hours</p>
+            <div class="package-card">
+                <p>Available Balance</p>
+                <h2 style="color: #3b82f6;">$<span id="withdraw-balance">0.00</span></h2>
+                
+                <input type="number" id="withdraw-amount" placeholder="Enter amount" min="1">
+                <input type="text" id="wallet-address" placeholder="USDT TRC20 Address">
+                
+                <div style="background: #0f172a; padding: 15px; border-radius: 10px; margin: 15px 0;">
+                    <p>⚠️ Minimum: $1</p>
+                    <p>⏰ Processing: 1-24 hours</p>
+                    <p>💎 Network: TRC20 only</p>
+                </div>
+                
+                <button class="btn" onclick="processWithdrawal()" style="background: #3b82f6;">Withdraw Now</button>
+            </div>
+        </div>
+
+        <!-- Transactions History -->
+        <div id="transactions" class="screen">
+            <button class="back-btn" onclick="showScreen('dashboard')">←</button>
+            <h2>Transaction History</h2>
+            
+            <div id="transactions-list" style="margin-top: 20px;">
+                <!-- Transactions will be loaded here -->
+            </div>
         </div>
     </div>
 
     <script>
+        // Telegram Web App
         let tg = window.Telegram.WebApp;
         let userData = null;
         
+        // Initialize
         async function initApp() {
-            tg.expand();
-            tg.ready();
+            try {
+                tg.expand();
+                tg.ready();
+                
+                // Get Telegram user
+                const user = tg.initDataUnsafe?.user;
+                if (!user) {
+                    document.getElementById('loading').innerHTML = '<h2>Please open from Telegram</h2>';
+                    return;
+                }
+                
+                // Register user
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        telegramId: user.id,
+                        username: user.username,
+                        firstName: user.first_name,
+                        lastName: user.last_name
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    userData = result.user;
+                    loadDashboard();
+                    showScreen('dashboard');
+                }
+            } catch (error) {
+                console.error('Init error:', error);
+                document.getElementById('loading').innerHTML = '<h2>Error loading app</h2>';
+            }
+        }
+        
+        // Load dashboard data
+        async function loadDashboard() {
+            if (!userData) return;
             
-            // Get Telegram user
-            const user = tg.initDataUnsafe?.user;
-            if (!user) {
-                alert('Please open from Telegram');
+            try {
+                const response = await fetch(`/api/dashboard/${userData.telegramId}`);
+                const data = await response.json();
+                
+                // Update user info
+                document.getElementById('user-name').textContent = 
+                    data.user.firstName || data.user.username || 'User';
+                
+                // Update balance
+                document.getElementById('balance').textContent = 
+                    data.user.earnings.availableBalance.toFixed(2);
+                document.getElementById('withdraw-balance').textContent = 
+                    data.user.earnings.availableBalance.toFixed(2);
+                
+                // Update package info
+                const packageEl = document.getElementById('current-package');
+                if (data.user.package.name) {
+                    packageEl.innerHTML = `
+                        <h3 style="color: #3b82f6;">${data.user.package.name.toUpperCase()}</h3>
+                        <p>Investment: $${data.user.package.amount}</p>
+                        <p>Daily ROI: $${data.user.package.dailyROI}</p>
+                        <p>Total Earned: $${data.user.earnings.totalROI.toFixed(2)}</p>
+                    `;
+                }
+                
+                // Load packages for investment screen
+                loadPackages();
+                
+                // Load transactions
+                loadTransactions(data.transactions);
+                
+            } catch (error) {
+                console.error('Dashboard error:', error);
+            }
+        }
+        
+        // Load packages
+        function loadPackages() {
+            const packages = [
+                { id: 'basic', name: 'Basic', price: 10, daily: 0.10, total: 25 },
+                { id: 'silver', name: 'Silver', price: 25, daily: 0.25, total: 62.5 },
+                { id: 'gold', name: 'Gold', price: 100, daily: 1.00, total: 250 },
+                { id: 'platinum', name: 'Platinum', price: 250, daily: 2.50, total: 625 },
+                { id: 'diamond', name: 'Diamond', price: 500, daily: 5.00, total: 1250 },
+                { id: 'crown', name: 'Crown', price: 1000, daily: 10.00, total: 2500 }
+            ];
+            
+            const container = document.getElementById('packages-list');
+            container.innerHTML = packages.map(pkg => `
+                <div class="package-card" onclick="selectPackage('${pkg.id}')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3>${pkg.name}</h3>
+                        <span class="badge">$${pkg.price}</span>
+                    </div>
+                    <div style="margin: 10px 0;">
+                        <p>Daily ROI: $${pkg.daily}</p>
+                        <p>Total ROI: $${pkg.total}</p>
+                    </div>
+                    <button class="btn" style="background: #3b82f6;">Select Package</button>
+                </div>
+            `).join('');
+        }
+        
+        // Load transactions
+        function loadTransactions(transactions) {
+            const container = document.getElementById('transactions-list');
+            
+            if (!transactions || transactions.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #94a3b8;">No transactions yet</p>';
                 return;
             }
             
-            // Register user
-            const response = await fetch('/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    telegramId: user.id,
-                    username: user.username,
-                    firstName: user.first_name,
-                    lastName: user.last_name
-                })
-            });
-            
-            userData = await response.json();
-            loadDashboard();
-            showScreen('dashboard');
-        }
-        
-        async function loadDashboard() {
-            const response = await fetch(`/api/dashboard/${userData.user.telegramId}`);
-            const data = await response.json();
-            
-            // Update UI
-            document.getElementById('user-name').textContent = 
-                userData.user.firstName || userData.user.username || 'User';
-            document.getElementById('balance').textContent = 
-                data.user.earnings.availableBalance.toFixed(2);
-            document.getElementById('available-balance').textContent = 
-                data.user.earnings.availableBalance.toFixed(2);
-            
-            // Package info
-            const packageInfo = document.getElementById('current-package');
-            if (data.user.package.name) {
-                packageInfo.innerHTML = `
-                    <strong>${data.user.package.name.toUpperCase()}</strong><br>
-                    Investment: $${data.user.package.amount}<br>
-                    Daily ROI: $${data.user.package.dailyROI}
-                `;
-            } else {
-                packageInfo.textContent = 'No active package';
-            }
-            
-            // Transactions
-            const txContainer = document.getElementById('transactions');
-            if (data.transactions.length > 0) {
-                txContainer.innerHTML = data.transactions.map(tx => `
-                    <div style="background:#1e293b; padding:10px; margin:5px 0; border-radius:8px;">
-                        <div style="display:flex; justify-content:space-between;">
-                            <span>${tx.type}</span>
-                            <span style="color:${tx.amount > 0 ? '#10b981' : '#ef4444'}">
-                                ${tx.amount > 0 ? '+' : '-'}$${Math.abs(tx.amount)}
-                            </span>
+            container.innerHTML = transactions.map(tx => `
+                <div class="transaction">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>
+                            <span class="badge">${tx.type.toUpperCase()}</span>
+                            <span style="color: #94a3b8;">${new Date(tx.timestamp).toLocaleDateString()}</span>
                         </div>
-                        <small style="color:#94a3b8;">${new Date(tx.timestamp).toLocaleDateString()}</small>
+                        <div class="${tx.amount > 0 ? 'positive' : 'negative'}" style="font-weight: bold;">
+                            ${tx.amount > 0 ? '+' : '-'}$${Math.abs(tx.amount).toFixed(2)}
+                        </div>
                     </div>
-                `).join('');
-            } else {
-                txContainer.innerHTML = '<p style="color:#94a3b8; text-align:center;">No transactions yet</p>';
-            }
+                    ${tx.details ? `<p style="margin-top: 5px; color: #94a3b8;">${JSON.stringify(tx.details)}</p>` : ''}
+                </div>
+            `).join('');
         }
         
+        // Screen navigation
         function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
             document.getElementById(screenId).classList.add('active');
         }
         
-        async function selectPackage(packageType) {
-            if (!confirm(`Invest in ${packageType.toUpperCase()} package?`)) return;
+        // Select package
+        async function selectPackage(packageId) {
+            if (!confirm(`Invest in ${packageId.toUpperCase()} package?`)) return;
             
-            const response = await fetch('/api/invest', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    telegramId: userData.user.telegramId,
-                    packageType: packageType
-                })
-            });
-            
-            const result = await response.json();
-            alert(result.success ? 'Investment successful!' : result.error);
-            loadDashboard();
-            showScreen('dashboard');
+            try {
+                const response = await fetch('/api/invest', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        telegramId: userData.telegramId,
+                        packageType: packageId
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`✅ Investment successful!\nPackage: ${packageId.toUpperCase()}\nAmount: $${result.user.package.amount}`);
+                    loadDashboard();
+                    showScreen('dashboard');
+                } else {
+                    alert(`❌ ${result.error}`);
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
         }
         
-        async function withdraw() {
-            const amount = document.getElementById('amount').value;
-            const wallet = document.getElementById('wallet').value;
+        // Claim daily ROI
+        async function claimDailyROI() {
+            try {
+                const response = await fetch('/api/calculate-roi', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegramId: userData.telegramId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`✅ Daily ROI claimed!\nAmount: $${result.roi}\nNew Balance: $${result.newBalance.toFixed(2)}`);
+                    loadDashboard();
+                } else {
+                    alert('No ROI available');
+                }
+            } catch (error) {
+                alert('Error claiming ROI');
+            }
+        }
+        
+        // Process withdrawal
+        async function processWithdrawal() {
+            const amount = document.getElementById('withdraw-amount').value;
+            const wallet = document.getElementById('wallet-address').value;
             
-            if (!amount || !wallet) {
-                alert('Please fill all fields');
+            if (!amount || amount <= 0) {
+                alert('Please enter valid amount');
                 return;
             }
             
-            const response = await fetch('/api/withdraw', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    telegramId: userData.user.telegramId,
-                    amount: amount,
-                    walletAddress: wallet
-                })
-            });
+            if (!wallet || wallet.length < 10) {
+                alert('Please enter valid USDT address');
+                return;
+            }
             
-            const result = await response.json();
-            alert(result.success ? 'Withdrawal submitted!' : result.error);
+            if (!confirm(`Withdraw $${amount} to:\n${wallet}`)) return;
             
-            // Clear form
-            document.getElementById('amount').value = '';
-            document.getElementById('wallet').value = '';
-            
-            loadDashboard();
-            showScreen('dashboard');
+            try {
+                const response = await fetch('/api/withdraw', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        telegramId: userData.telegramId,
+                        amount: amount,
+                        walletAddress: wallet
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`✅ Withdrawal submitted!\nNew Balance: $${result.newBalance.toFixed(2)}\n\nProcessing may take 1-24 hours.`);
+                    
+                    // Clear form
+                    document.getElementById('withdraw-amount').value = '';
+                    document.getElementById('wallet-address').value = '';
+                    
+                    loadDashboard();
+                    showScreen('dashboard');
+                } else {
+                    alert(`❌ ${result.error}`);
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
         }
         
-        async function loadStats() {
-            const response = await fetch(`/api/dashboard/${userData.user.telegramId}`);
-            const data = await response.json();
-            
-            alert(`Total ROI: $${data.user.earnings.totalROI.toFixed(2)}\nReferral Earnings: $${data.user.earnings.totalReferral.toFixed(2)}`);
-        }
-        
-        // Initialize
+        // Initialize app
         document.addEventListener('DOMContentLoaded', initApp);
+        
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
