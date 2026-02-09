@@ -1,17 +1,19 @@
 {
-  "functions": {
-    "api/index.js": {
-      "maxDuration": 30
-    }
-  },
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/",
-      "destination": "/public/index.html"
+      "src": "api/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.js"
     },
     {
-      "source": "/api/(.*)",
-      "destination": "/api"
+      "src": "/(.*)",
+      "dest": "/public/index.html"
     }
   ],
   "headers": [
@@ -19,16 +21,14 @@
       "source": "/(.*)",
       "headers": [
         {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors https://web.telegram.org"
+        },
+        {
           "key": "X-Frame-Options",
-          "value": "ALLOWALL"
+          "value": "ALLOW-FROM https://web.telegram.org"
         }
       ]
-    }
-  ],
-  "crons": [
-    {
-      "path": "/api/cron/daily-roi?secret=YOUR_CRON_SECRET",
-      "schedule": "0 0 * * *"
     }
   ]
 }
