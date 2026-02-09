@@ -1,7 +1,7 @@
 {
-  "name": "usdt-miner-no-db",
+  "name": "usdt-miner-telegram",
   "version": "1.0.0",
-  "description": "USDT Miner without MongoDB",
+  "description": "USDT Miner Telegram Mini App",
   "main": "api/index.js",
   "scripts": {
     "start": "node api/index.js",
@@ -10,17 +10,9 @@
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
-    "uuid": "^9.0.0",
-    "google-spreadsheet": "^3.3.0",
-    "node-cron": "^3.0.2",
-    "axios": "^1.3.0",
-    "fs-extra": "^11.1.1",
-    "lowdb": "^5.0.5"
-  },
-  "devDependencies": {
-    "@vercel/node": "^2.0.0"
+    "uuid": "^9.0.1"
   },
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   }
 }
